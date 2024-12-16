@@ -1,0 +1,28 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.example'
+version = '0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven { url "https://raw.githubusercontent.com/arthurpicht/mvn-repo/main/releases"}
+}
+
+dependencies {
+
+    implementation libs.m7r.commons
+
+    implementation libs.ap.configuration
+
+//    testImplementation libs.junit.jupiter
+//    testRuntimeOnly libs.junit.engine
+
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}

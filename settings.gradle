@@ -1,0 +1,5 @@
+rootProject.name = 'm7r-daemon'
+
+apply from: "../../infra/m7r-common-config/libs.gradle"
+
+includeBuild('../m7r-commons')
