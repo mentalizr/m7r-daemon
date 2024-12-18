@@ -14,7 +14,12 @@ dependencies {
 
     implementation libs.m7r.commons
 
+    implementation libs.ap.utils.core
+    implementation libs.ap.utils.io
+    implementation libs.ap.utils.logging
     implementation libs.ap.configuration
+
+    implementation libs.qos.logback
 
 //    testImplementation libs.junit.jupiter
 //    testRuntimeOnly libs.junit.engine
@@ -26,3 +31,15 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+tasks.register('extractDependencies', Copy) {
+    dependsOn jar
+    from configurations.runtimeClasspath
+    into layout.buildDirectory.dir("dependencies")
+}
+
+tasks.register('tool') {
+    dependsOn extractDependencies
+}
+
+defaultTasks 'extractDependencies'
