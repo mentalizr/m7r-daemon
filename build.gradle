@@ -18,6 +18,8 @@ dependencies {
     implementation libs.ap.utils.io
     implementation libs.ap.utils.logging
     implementation libs.ap.configuration
+    implementation libs.ap.process.executor
+    implementation libs.ap.linux.wrapper
 
     implementation libs.qos.logback
 
