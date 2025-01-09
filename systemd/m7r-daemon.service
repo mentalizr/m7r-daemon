@@ -3,11 +3,12 @@ Description=mentalizr daemon
 After=network.target
 
 [Service]
-Type=simple
+# Type=simple
+Type=forking
 User=m7radmin
 Environment="PATH=$PATH:/usr/bin:/home/m7radmin/man/java/current/bin:/home/m7radmin/gitrepos/m7r/core/m7r-infra/bin"
 ExecStart=/home/m7radmin/gitrepos/m7r/core/m7r-infra/bin/m7r-infra daemon start
-# ExecStart=/home/m7radmin/dummy.sh
+ExecStop=/home/m7radmin/gitrepos/m7r/core/m7r-infra/bin/m7r-infra daemon stop
 
 [Install]
 WantedBy=multi-user.target

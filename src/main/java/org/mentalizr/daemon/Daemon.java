@@ -54,6 +54,8 @@ public class Daemon {
 
     }
 
+
+
     private static boolean alreadyRunning() throws IOException {
         if (pidFile.exists()) {
             long pid = pidFile.getPid();
