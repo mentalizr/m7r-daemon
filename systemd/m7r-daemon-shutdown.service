@@ -1,0 +1,14 @@
+[Unit]
+Description=mentalizr daemon shutdown
+After=network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+User=m7radmin
+Environment="PATH=$PATH:/usr/bin:/home/m7radmin/man/java/current/bin:/home/m7radmin/gitrepos/m7r/core/m7r-infra/bin"
+ExecStart=/bin/true
+ExecStop=/home/m7radmin/gitrepos/m7r/core/m7r-infra/bin/m7r-infra daemon stop
+
+[Install]
+WantedBy=multi-user.target
