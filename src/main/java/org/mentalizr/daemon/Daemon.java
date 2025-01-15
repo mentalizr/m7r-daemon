@@ -2,6 +2,7 @@ package org.mentalizr.daemon;
 
 import de.arthurpicht.linuxWrapper.core.ps.Ps;
 import de.arthurpicht.processExecutor.ProcessResultCollection;
+import org.mentalizr.commons.DaemonPidFile;
 import org.mentalizr.commons.paths.host.hostDir.M7rDaemonPidFile;
 import org.mentalizr.daemon.appInit.ApplicationInitialization;
 import org.mentalizr.daemon.appInit.ApplicationInitializationException;
@@ -15,7 +16,7 @@ import java.io.IOException;
 public class Daemon {
 
     private static final Logger logger = LoggerFactory.getLogger(Daemon.class);
-    private static final PidFile pidFile = new PidFile(new M7rDaemonPidFile().asPath());
+    private static final DaemonPidFile daemonPidFile = new DaemonPidFile();
 
     public static void main(String[] args) {
 
@@ -28,15 +29,15 @@ public class Daemon {
 
         logger.info("Starting Daemon...");
 
-        logger.debug("PID file is: " + pidFile.asPath().toAbsolutePath());
+        logger.debug("PID file is: " + daemonPidFile.asPath().toAbsolutePath());
 
         try {
             if (alreadyRunning()) {
                 logger.error("Daemon is already running. Exiting.");
                 System.exit(2);
             }
-            pidFile.create();
-        } catch (IOException e) {
+            daemonPidFile.create();
+        } catch (RuntimeException e) {
             logger.error(e.getMessage(), e);
             System.exit(1);
         }
@@ -54,11 +55,9 @@ public class Daemon {
 
     }
 
-
-
-    private static boolean alreadyRunning() throws IOException {
-        if (pidFile.exists()) {
-            long pid = pidFile.getPid();
+    private static boolean alreadyRunning() {
+        if (daemonPidFile.exists()) {
+            long pid = daemonPidFile.getPid();
             ProcessResultCollection processResultCollection = Ps.execute(Math.toIntExact(pid));
             return !Ps.noProcessForPidFound(processResultCollection);
         }
@@ -68,9 +67,9 @@ public class Daemon {
     private static void addShutdownHook() {
         Thread shutdownHook = new Thread(() -> {
             try {
-                 pidFile.removeIfExists();
-            } catch (IOException e) {
-                logger.error("Cannot delete PID file [" + pidFile.asPath() + "]: " + e.getMessage(), e);
+                 daemonPidFile.removeIfExists();
+            } catch (RuntimeException e) {
+                logger.error("Cannot delete PID file [" + daemonPidFile.asPath() + "]: " + e.getMessage(), e);
             }
             logger.info("Daemon is shut down.");
         });
