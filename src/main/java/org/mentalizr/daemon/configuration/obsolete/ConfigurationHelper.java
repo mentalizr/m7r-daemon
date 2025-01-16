@@ -1,4 +1,4 @@
-package org.mentalizr.daemon.configuration;
+package org.mentalizr.daemon.configuration.obsolete;
 
 import de.arthurpicht.configuration.Configuration;
 import de.arthurpicht.configuration.ConfigurationFactory;

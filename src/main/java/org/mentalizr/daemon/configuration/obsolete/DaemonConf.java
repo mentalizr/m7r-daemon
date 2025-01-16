@@ -1,4 +1,4 @@
-package org.mentalizr.daemon.configuration;
+package org.mentalizr.daemon.configuration.obsolete;
 
 public class DaemonConf {
 

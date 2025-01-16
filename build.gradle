@@ -22,6 +22,7 @@ dependencies {
     implementation libs.ap.linux.wrapper
 
     implementation libs.qos.logback
+    implementation libs.quartz
 
 //    testImplementation libs.junit.jupiter
 //    testRuntimeOnly libs.junit.engine

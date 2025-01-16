@@ -1,11 +1,11 @@
-package org.mentalizr.daemon.configuration;
+package org.mentalizr.daemon.configuration.obsolete;
 
 import de.arthurpicht.configuration.Configuration;
 import de.arthurpicht.configuration.ConfigurationFactory;
 import org.mentalizr.commons.paths.host.hostDir.DaemonConfigFile;
 
-import static org.mentalizr.daemon.configuration.ConfigurationHelper.*;
-import static org.mentalizr.daemon.configuration.DaemonConf.*;
+import static org.mentalizr.daemon.configuration.obsolete.ConfigurationHelper.*;
+import static org.mentalizr.daemon.configuration.obsolete.DaemonConf.*;
 
 public class DaemonConfLoader {
 

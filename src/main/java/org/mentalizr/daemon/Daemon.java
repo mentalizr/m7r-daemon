@@ -3,14 +3,13 @@ package org.mentalizr.daemon;
 import de.arthurpicht.linuxWrapper.core.ps.Ps;
 import de.arthurpicht.processExecutor.ProcessResultCollection;
 import org.mentalizr.commons.DaemonPidFile;
-import org.mentalizr.commons.paths.host.hostDir.M7rDaemonPidFile;
 import org.mentalizr.daemon.appInit.ApplicationInitialization;
 import org.mentalizr.daemon.appInit.ApplicationInitializationException;
-import org.mentalizr.commons.helper.PidFile;
+import org.mentalizr.daemon.jobs.HeartbeatJob;
+import org.quartz.*;
+import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
 
 @SuppressWarnings("StringConcatenationArgumentToLogCall")
 public class Daemon {
@@ -42,15 +41,26 @@ public class Daemon {
             System.exit(1);
         }
 
-        addShutdownHook();
 
-        while (true) {
-            logger.info("Daemon is running");
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                // din
-            }
+        try {
+            Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+            addShutdownHook(scheduler);
+            scheduler.start();
+
+            JobDetail job = JobBuilder.newJob(HeartbeatJob.class)
+                    .withIdentity("heartbeat", "demo")
+                    .build();
+
+            Trigger trigger = TriggerBuilder.newTrigger()
+                    .withIdentity("heartbeat-trigger", "demo")
+                    .startNow()
+                    .withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(5).repeatForever())
+                    .build();
+
+            scheduler.scheduleJob(job, trigger);
+
+        } catch (SchedulerException e) {
+            logger.error("Starting daemon failed: " + e.getMessage(), e);
         }
 
     }
@@ -64,12 +74,17 @@ public class Daemon {
         return false;
     }
 
-    private static void addShutdownHook() {
+    private static void addShutdownHook(Scheduler scheduler) {
         Thread shutdownHook = new Thread(() -> {
             try {
                  daemonPidFile.removeIfExists();
             } catch (RuntimeException e) {
                 logger.error("Cannot delete PID file [" + daemonPidFile.asPath() + "]: " + e.getMessage(), e);
+            }
+            try {
+                scheduler.shutdown();
+            } catch (SchedulerException e) {
+                logger.error("Shutdown of scheduler failed: " + e.getMessage(), e);
             }
             logger.info("Daemon is shut down.");
         });
