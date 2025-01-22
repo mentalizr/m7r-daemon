@@ -1,49 +1,39 @@
 package org.mentalizr.daemon.jobs.activityStatWeekly;
 
-import de.arthurpicht.configuration.Configuration;
-import org.mentalizr.daemon.DaemonException;
+import org.mentalizr.daemon.jobs.BaseConfiguration;
 
-import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-public class ActivityStatWeeklyConfiguration {
+public record ActivityStatWeeklyConfiguration(
+        BaseConfiguration baseConfiguration,
+        Set<String> programs,
+        Set<String> excludePrograms,
+        Set<String> projects,
+        Set<String> excludeProjects,
+        List<String> recipients
+) {
 
     public static final String PROGRAMS = "programs";
     public static final String EXCLUDE_PROGRAMS = "exclude_programs";
     public static final String PROJECTS = "projects";
     public static final String EXCLUDE_PROJECTS = "exclude_projects";
-
-    private Configuration configuration;
-
-    public ActivityStatWeeklyConfiguration(Path configurationPath, Configuration configuration) {
-        if (configuration.containsKey(PROGRAMS) || configuration.containsKey(EXCLUDE_PROGRAMS))
-            throw new DaemonException("Job configuration [" + configurationPath.toAbsolutePath() + "] " +
-                                      "has contradictions: [" + PROGRAMS + "] and [" + EXCLUDE_PROGRAMS + "].");
-        if (configuration.containsKey(PROJECTS) || configuration.containsKey(EXCLUDE_PROJECTS))
-            throw new DaemonException("Job configuration [" + configurationPath.toAbsolutePath() + "] " +
-                                      "has contradictions: [" + PROJECTS + "] and [" + EXCLUDE_PROJECTS + "].");
-        this.configuration = configuration;
-    }
+    public static final String RECIPIENTS = "recipients";
 
     public boolean hasPrograms() {
-        return this.configuration.containsKey(PROGRAMS);
-    }
-
-    public Set<String> getPrograms() {
-        if (!this.hasPrograms())
-            throw new IllegalStateException("No programs configured");
-        List<String> programs = this.configuration.getStringList(PROGRAMS);
-        return Set.copyOf(programs);
+        return programs != null && !programs.isEmpty();
     }
 
     public boolean hasExcludePrograms() {
-        return this.configuration.containsKey(EXCLUDE_PROGRAMS);
+        return excludePrograms != null && !excludePrograms.isEmpty();
     }
 
-    public Set<String> getExcludePrograms() {
-        throw new RuntimeException("Not implemented yet");
+    public boolean hasProjects() {
+        return projects != null && !projects.isEmpty();
+    }
+
+    public boolean hasExcludeProjects() {
+        return excludeProjects != null && !excludeProjects.isEmpty();
     }
 
 }
