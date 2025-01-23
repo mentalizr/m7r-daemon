@@ -3,9 +3,10 @@ package org.mentalizr.daemon;
 import de.arthurpicht.linuxWrapper.core.ps.Ps;
 import de.arthurpicht.processExecutor.ProcessResultCollection;
 import org.mentalizr.commons.DaemonPidFile;
+import org.mentalizr.commons.paths.host.hostDir.M7rDaemonConfigDir;
 import org.mentalizr.daemon.appInit.ApplicationInitialization;
 import org.mentalizr.daemon.appInit.ApplicationInitializationException;
-import org.mentalizr.daemon.jobs.HeartbeatJob;
+import org.mentalizr.daemon.configuration.JobConfigurations;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
@@ -45,19 +46,23 @@ public class Daemon {
         try {
             Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
             addShutdownHook(scheduler);
+
+            JobConfigurations jobConfigurations = new JobConfigurations(new M7rDaemonConfigDir().asPath());
+            JobInitializer.initialize(scheduler, jobConfigurations);
+
             scheduler.start();
 
-            JobDetail job = JobBuilder.newJob(HeartbeatJob.class)
-                    .withIdentity("heartbeat", "demo")
-                    .build();
-
-            Trigger trigger = TriggerBuilder.newTrigger()
-                    .withIdentity("heartbeat-trigger", "demo")
-                    .startNow()
-                    .withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(5).repeatForever())
-                    .build();
-
-            scheduler.scheduleJob(job, trigger);
+//            JobDetail job = JobBuilder.newJob(HeartbeatJob.class)
+//                    .withIdentity("heartbeat", "demo")
+//                    .build();
+//
+//            Trigger trigger = TriggerBuilder.newTrigger()
+//                    .withIdentity("heartbeat-trigger", "demo")
+//                    .startNow()
+//                    .withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(5).repeatForever())
+//                    .build();
+//
+//            scheduler.scheduleJob(job, trigger);
 
         } catch (SchedulerException e) {
             logger.error("Starting daemon failed: " + e.getMessage(), e);

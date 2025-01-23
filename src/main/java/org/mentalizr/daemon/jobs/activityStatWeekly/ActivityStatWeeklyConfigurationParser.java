@@ -5,6 +5,7 @@ import de.arthurpicht.utils.core.collection.Sets;
 import org.mentalizr.daemon.DaemonConfigurationException;
 import org.mentalizr.daemon.DaemonException;
 import org.mentalizr.daemon.jobs.BaseConfiguration;
+import org.mentalizr.daemon.jobs.JobConfigurationParser;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -14,24 +15,23 @@ import java.util.Set;
 
 import static org.mentalizr.daemon.jobs.activityStatWeekly.ActivityStatWeeklyConfiguration.*;
 
-public class ActivityStatWeeklyConfigurationParser {
+public class ActivityStatWeeklyConfigurationParser extends JobConfigurationParser {
 
-    public static ActivityStatWeeklyConfiguration parse(BaseConfiguration baseConfiguration, Configuration configuration, Path configurationPath) {
+    public ActivityStatWeeklyConfigurationParser(BaseConfiguration baseConfiguration, Configuration configuration, Path configurationPath) {
+        super(baseConfiguration, configuration, configurationPath);
+    }
 
-        checkForParameterSyntaxErrors(
-                configuration,
-                Sets.newHashSet(PROGRAMS, EXCLUDE_PROGRAMS, PROJECTS, EXCLUDE_PROJECTS, RECIPIENTS),
-                configurationPath.toAbsolutePath().toString());
-        checkForMandatoryParameters(
-                configuration,
-                Sets.newHashSet(RECIPIENTS),
-                configurationPath.toAbsolutePath().toString());
+    @Override
+    public ActivityStatWeeklyConfiguration parse() {
+
+        checkForParameterSyntaxErrors(Sets.newHashSet(PROGRAMS, EXCLUDE_PROGRAMS, PROJECTS, EXCLUDE_PROJECTS, RECIPIENTS));
+        checkForMandatoryParameters(Sets.newHashSet(RECIPIENTS));
 
         if (configuration.containsKey(PROGRAMS) && configuration.containsKey(EXCLUDE_PROGRAMS))
-            throw new DaemonException("Job configuration [" + configurationPath.toAbsolutePath() + "] " +
+            throw new DaemonException("Job configuration [" + this.configurationFile.toAbsolutePath() + "] " +
                     "has contradictions: [" + PROGRAMS + "] and [" + EXCLUDE_PROGRAMS + "].");
         if (configuration.containsKey(PROJECTS) && configuration.containsKey(EXCLUDE_PROJECTS))
-            throw new DaemonException("Job configuration [" + configurationPath.toAbsolutePath() + "] " +
+            throw new DaemonException("Job configuration [" + this.configurationFile.toAbsolutePath() + "] " +
                     "has contradictions: [" + PROJECTS + "] and [" + EXCLUDE_PROJECTS + "].");
 
         Set<String> programs = getValueSet(configuration, PROGRAMS);
@@ -49,33 +49,7 @@ public class ActivityStatWeeklyConfigurationParser {
                 recipients);
     }
 
-    private static void checkForParameterSyntaxErrors(
-            Configuration configuration,
-            Set<String> validParameters,
-            String absolutePath) {
-
-        Set<String> keys = configuration.getKeys();
-        for (String key : keys) {
-            if (!validParameters.contains(key))
-                throw new DaemonConfigurationException("Illegal parameter [" + key + "] " +
-                        "in configuration file [" + absolutePath + "].");
-        }
-    }
-
-    private static void checkForMandatoryParameters(
-            Configuration configuration,
-            Set<String> mandatoryParameters,
-            String absolutePath) {
-
-        Set<String> keys = configuration.getKeys();
-        for (String parameter : mandatoryParameters) {
-            if (!keys.contains(parameter))
-                throw new DaemonConfigurationException("Mandatory parameter [" + parameter + "] " +
-                        "not found in configuration file [" + absolutePath + "].");
-        }
-    }
-
-    private static Set<String> getValueSet(Configuration configuration, String parameter) {
+    private Set<String> getValueSet(Configuration configuration, String parameter) {
         if (configuration.containsKey(parameter)) {
             List<String> valueList = configuration.getStringList(parameter);
             return Set.copyOf(valueList);
@@ -85,7 +59,7 @@ public class ActivityStatWeeklyConfigurationParser {
     }
 
     @SuppressWarnings("SameParameterValue")
-    private static List<String> getValueList(Configuration configuration, String parameter) {
+    private List<String> getValueList(Configuration configuration, String parameter) {
         if (configuration.containsKey(parameter)) {
             return configuration.getStringList(parameter);
         } else {
