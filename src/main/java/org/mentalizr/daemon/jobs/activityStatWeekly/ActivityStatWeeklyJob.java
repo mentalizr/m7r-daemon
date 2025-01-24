@@ -10,6 +10,7 @@ import org.mentalizr.clientSdk.SessionAgent;
 import org.mentalizr.clientSdk.activityStat.ActivityStat;
 import org.mentalizr.clientSdk.activityStat.ActivityStatRequest;
 import org.mentalizr.daemon.jobs.JobHelper;
+import org.mentalizr.daemon.jobs.SchedulerJob;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -18,7 +19,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class ActivityStatWeeklyJob implements Job {
+public class ActivityStatWeeklyJob extends SchedulerJob implements Job {
+
+    public static final String NAME = "activity-stat-weekly";
 
     private static final Logger logger = LoggerFactory.getLogger(ActivityStatWeeklyJob.class);
 
@@ -29,7 +32,7 @@ public class ActivityStatWeeklyJob implements Job {
     }
 
     @Override
-    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+    public void schedulerExecute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         if (JobHelper.isInactive()) {
             logger.info("Execution prevented. Scheduler is configured to be inactive.");
         }

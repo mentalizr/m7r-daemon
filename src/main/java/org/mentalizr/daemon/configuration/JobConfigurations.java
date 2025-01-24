@@ -9,8 +9,10 @@ import org.mentalizr.daemon.DaemonConfigurationException;
 import org.mentalizr.daemon.DaemonException;
 import org.mentalizr.daemon.DaemonInitializationException;
 import org.mentalizr.daemon.jobs.BaseConfiguration;
+import org.mentalizr.daemon.jobs.activityStatWeekly.ActivityStatWeekly;
 import org.mentalizr.daemon.jobs.activityStatWeekly.ActivityStatWeeklyConfiguration;
 import org.mentalizr.daemon.jobs.activityStatWeekly.ActivityStatWeeklyConfigurationParser;
+import org.mentalizr.daemon.jobs.heartbeat.Heartbeat;
 import org.mentalizr.daemon.jobs.heartbeat.HeartbeatConfiguration;
 import org.mentalizr.daemon.jobs.heartbeat.HeartbeatConfigurationParser;
 
@@ -20,9 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JobConfigurations {
-
-    public static final String ACTIVITY_STAT_WEEKLY = "activity-stat-weekly";
-    public static final String HEARTBEAT = "heartbeat";
 
     private final Path configDir;
 
@@ -42,8 +41,8 @@ public class JobConfigurations {
             ConfigurationFactory configurationFactory = obtainConfigurationFactory(configurationFile);
             BaseConfiguration baseConfiguration = getBaseConfiguration(configurationFile, configurationFactory);
 
-            if (configurationFactory.hasSection(ACTIVITY_STAT_WEEKLY)) {
-                Configuration activityStatWeeklySection = configurationFactory.getConfiguration(ACTIVITY_STAT_WEEKLY);
+            if (configurationFactory.hasSection(ActivityStatWeekly.NAME)) {
+                Configuration activityStatWeeklySection = configurationFactory.getConfiguration(ActivityStatWeekly.NAME);
                 ActivityStatWeeklyConfigurationParser activityStatWeeklyConfigurationParser
                         = new ActivityStatWeeklyConfigurationParser(
                         baseConfiguration,
@@ -52,8 +51,8 @@ public class JobConfigurations {
                 ActivityStatWeeklyConfiguration activityStatWeeklyConfiguration
                         = activityStatWeeklyConfigurationParser.parse();
                 this.activityStatWeeklyConfigurations.add(activityStatWeeklyConfiguration);
-            } else if (configurationFactory.hasSection(HEARTBEAT)) {
-                Configuration heartbeatSection = configurationFactory.getConfiguration(HEARTBEAT);
+            } else if (configurationFactory.hasSection(Heartbeat.NAME)) {
+                Configuration heartbeatSection = configurationFactory.getConfiguration(Heartbeat.NAME);
                 HeartbeatConfigurationParser heartbeatConfigurationParser
                         = new HeartbeatConfigurationParser(baseConfiguration, heartbeatSection, configurationFile);
                 HeartbeatConfiguration heartbeatConfiguration = heartbeatConfigurationParser.parse();

@@ -1,12 +1,13 @@
 package org.mentalizr.daemon.jobs.heartbeat;
 
+import org.mentalizr.daemon.jobs.SchedulerJob;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HeartbeatJob implements Job {
+public class HeartbeatJob extends SchedulerJob implements Job {
 
     private static final Logger logger = LoggerFactory.getLogger(HeartbeatJob.class);
 
@@ -17,7 +18,7 @@ public class HeartbeatJob implements Job {
     }
 
     @Override
-    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+    public void schedulerExecute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         String logMessage = this.heartbeatConfiguration.logMessage();
         logger.info(logMessage);
     }
