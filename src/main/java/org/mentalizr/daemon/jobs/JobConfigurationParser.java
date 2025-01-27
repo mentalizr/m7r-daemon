@@ -1,7 +1,7 @@
 package org.mentalizr.daemon.jobs;
 
 import de.arthurpicht.configuration.Configuration;
-import org.mentalizr.daemon.DaemonConfigurationException;
+import org.mentalizr.daemon.M7rSchedulerConfigurationException;
 
 import java.nio.file.Path;
 import java.util.Set;
@@ -24,8 +24,8 @@ public abstract class JobConfigurationParser {
         Set<String> keys = this.configuration.getKeys();
         for (String key : keys) {
             if (!validParameters.contains(key))
-                throw new DaemonConfigurationException("Illegal parameter [" + key + "] " +
-                        "in configuration file [" + this.configurationFile.toAbsolutePath() + "].");
+                throw new M7rSchedulerConfigurationException("Illegal parameter [" + key + "] " +
+                                                             "in configuration file [" + this.configurationFile.toAbsolutePath() + "].");
         }
     }
 
@@ -33,8 +33,8 @@ public abstract class JobConfigurationParser {
         Set<String> keys = configuration.getKeys();
         for (String parameter : mandatoryParameters) {
             if (!keys.contains(parameter))
-                throw new DaemonConfigurationException("Mandatory parameter [" + parameter + "] " +
-                        "not found in configuration file [" + this.configurationFile.toAbsolutePath() + "].");
+                throw new M7rSchedulerConfigurationException("Mandatory parameter [" + parameter + "] " +
+                                                             "not found in configuration file [" + this.configurationFile.toAbsolutePath() + "].");
         }
     }
 

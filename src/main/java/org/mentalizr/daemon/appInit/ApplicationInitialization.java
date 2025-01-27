@@ -2,7 +2,7 @@ package org.mentalizr.daemon.appInit;
 
 import ch.qos.logback.classic.Level;
 import de.arthurpicht.utils.logging.LoggerInit;
-import org.mentalizr.commons.paths.host.hostDir.M7rDaemonConfigDir;
+import org.mentalizr.commons.paths.host.hostDir.M7rSchedulerConfigDir;
 import org.mentalizr.commons.paths.host.hostDir.M7rHostLogDir;
 
 import java.io.IOException;
@@ -36,7 +36,7 @@ public class ApplicationInitialization {
     }
 
     private static void createDaemonConfigDir() {
-        M7rDaemonConfigDir m7rDaemonConfigDir = new M7rDaemonConfigDir();
+        M7rSchedulerConfigDir m7rDaemonConfigDir = new M7rSchedulerConfigDir();
         if (!m7rDaemonConfigDir.exists()) {
             try {
                 m7rDaemonConfigDir.create();

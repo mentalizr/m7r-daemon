@@ -4,7 +4,7 @@ import de.arthurpicht.configuration.Configuration;
 import de.arthurpicht.configuration.ConfigurationFactory;
 import de.arthurpicht.configuration.ConfigurationFileNotFoundException;
 import org.mentalizr.commons.paths.M7rFile;
-import org.mentalizr.daemon.DaemonConfigurationException;
+import org.mentalizr.daemon.M7rSchedulerConfigurationException;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,14 +17,14 @@ public class ConfigurationHelper {
         try {
             configurationFactory.addConfigurationFileFromFilesystem(daemonConfigFileAsFile);
         } catch (ConfigurationFileNotFoundException | IOException e) {
-            throw new DaemonConfigurationException("File not found: [" + daemonConfigFileAsFile.getAbsolutePath() + "].");
+            throw new M7rSchedulerConfigurationException("File not found: [" + daemonConfigFileAsFile.getAbsolutePath() + "].");
         }
         return configurationFactory;
     }
 
     public static boolean getMandatoryBoolean(Configuration configuration, String name, M7rFile m7rFile) {
         if (!configuration.containsKey(name))
-            throw new DaemonConfigurationException(
+            throw new M7rSchedulerConfigurationException(
                     "Configuration parameter [" + name + "] not found in ["
                             + m7rFile.asPath().toAbsolutePath() + "].");
         return configuration.getBoolean(name);
@@ -32,7 +32,7 @@ public class ConfigurationHelper {
 
     public static int getMandatoryInt(Configuration configuration, String name, M7rFile m7rFile) {
         if (!configuration.containsKey(name))
-            throw new DaemonConfigurationException(
+            throw new M7rSchedulerConfigurationException(
                     "Configuration parameter [" + name + "] not found in ["
                             + m7rFile.asPath().toAbsolutePath() + "].");
         return configuration.getInt(name);

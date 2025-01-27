@@ -2,6 +2,6 @@ package org.mentalizr.daemon.jobs.activityStatWeekly;
 
 public class ActivityStatWeekly {
 
-    public static final String NAME = "activity-stat-weekly";
+    public static final String TYPE = "activity-stat-weekly";
 
 }

@@ -2,8 +2,7 @@ package org.mentalizr.daemon.jobs.activityStatWeekly;
 
 import de.arthurpicht.configuration.Configuration;
 import de.arthurpicht.utils.core.collection.Sets;
-import org.mentalizr.daemon.DaemonConfigurationException;
-import org.mentalizr.daemon.DaemonException;
+import org.mentalizr.daemon.M7rSchedulerException;
 import org.mentalizr.daemon.jobs.BaseConfiguration;
 import org.mentalizr.daemon.jobs.JobConfigurationParser;
 
@@ -28,11 +27,11 @@ public class ActivityStatWeeklyConfigurationParser extends JobConfigurationParse
         checkForMandatoryParameters(Sets.newHashSet(RECIPIENTS));
 
         if (configuration.containsKey(PROGRAMS) && configuration.containsKey(EXCLUDE_PROGRAMS))
-            throw new DaemonException("Job configuration [" + this.configurationFile.toAbsolutePath() + "] " +
-                    "has contradictions: [" + PROGRAMS + "] and [" + EXCLUDE_PROGRAMS + "].");
+            throw new M7rSchedulerException("Job configuration [" + this.configurationFile.toAbsolutePath() + "] " +
+                                            "has contradictions: [" + PROGRAMS + "] and [" + EXCLUDE_PROGRAMS + "].");
         if (configuration.containsKey(PROJECTS) && configuration.containsKey(EXCLUDE_PROJECTS))
-            throw new DaemonException("Job configuration [" + this.configurationFile.toAbsolutePath() + "] " +
-                    "has contradictions: [" + PROJECTS + "] and [" + EXCLUDE_PROJECTS + "].");
+            throw new M7rSchedulerException("Job configuration [" + this.configurationFile.toAbsolutePath() + "] " +
+                                            "has contradictions: [" + PROJECTS + "] and [" + EXCLUDE_PROJECTS + "].");
 
         Set<String> programs = getValueSet(configuration, PROGRAMS);
         Set<String> excludePrograms = getValueSet(configuration, EXCLUDE_PROGRAMS);

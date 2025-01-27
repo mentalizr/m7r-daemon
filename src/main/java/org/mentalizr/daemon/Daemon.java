@@ -3,7 +3,7 @@ package org.mentalizr.daemon;
 import de.arthurpicht.linuxWrapper.core.ps.Ps;
 import de.arthurpicht.processExecutor.ProcessResultCollection;
 import org.mentalizr.commons.DaemonPidFile;
-import org.mentalizr.commons.paths.host.hostDir.M7rDaemonConfigDir;
+import org.mentalizr.commons.paths.host.hostDir.M7rSchedulerConfigDir;
 import org.mentalizr.daemon.appInit.ApplicationInitialization;
 import org.mentalizr.daemon.appInit.ApplicationInitializationException;
 import org.mentalizr.daemon.configuration.JobConfigurations;
@@ -27,7 +27,7 @@ public class Daemon {
             System.exit(1);
         }
 
-        logger.info("Starting Daemon...");
+        logger.info("Starting Daemon... dudu");
 
         logger.debug("PID file is: " + daemonPidFile.asPath().toAbsolutePath());
 
@@ -47,7 +47,11 @@ public class Daemon {
             Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
             addShutdownHook(scheduler);
 
-            JobConfigurations jobConfigurations = new JobConfigurations(new M7rDaemonConfigDir().asPath());
+            JobConfigurations jobConfigurations = JobConfigurations.create();
+
+            logger.info(jobConfigurations.getHeartbeatConfigurations() + " heartbeat jobs found.");
+            logger.info(jobConfigurations.getActivityStatWeeklyConfigurations() + " activityStatWeekly jobs found.");
+
             JobInitializer.initialize(scheduler, jobConfigurations);
 
             scheduler.start();

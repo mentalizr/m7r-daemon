@@ -11,5 +11,4 @@ class DummyTest {
         assertEquals(0, new Dummy().dudu());
     }
 
-
 }
