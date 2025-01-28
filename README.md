@@ -1,2 +1,3 @@
-# m7r-daemon
-Background process for managing time-based and repetitive tasks
+# m7r-scheduler
+
+Background process for managing time-based and repetitive tasks.
