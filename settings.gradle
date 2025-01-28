@@ -1,4 +1,4 @@
-rootProject.name = 'm7r-daemon'
+rootProject.name = 'm7r-scheduler'
 
 apply from: "../../infra/m7r-common-config/libs.gradle"
 

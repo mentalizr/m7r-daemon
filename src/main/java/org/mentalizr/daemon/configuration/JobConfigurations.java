@@ -11,6 +11,7 @@ import org.mentalizr.daemon.M7rSchedulerConfigurationException;
 import org.mentalizr.daemon.M7rSchedulerException;
 import org.mentalizr.daemon.M7rSchedulerInitializationException;
 import org.mentalizr.daemon.helper.Checksums;
+import org.mentalizr.daemon.helper.FileHelper;
 import org.mentalizr.daemon.jobs.BaseConfiguration;
 import org.mentalizr.daemon.jobs.activityStatWeekly.ActivityStatWeekly;
 import org.mentalizr.daemon.jobs.activityStatWeekly.ActivityStatWeeklyConfiguration;
@@ -43,6 +44,9 @@ public class JobConfigurations {
         List<Path> configurationFiles = scanSchedulerConfigDir(configDir);
 
         logger.info(configurationFiles.size() + " configuration files found.");
+        for (Path path : configurationFiles) {
+            logger.info("configuration file: " + path.toString());
+        }
 
         List<ActivityStatWeeklyConfiguration> activityStatWeeklyConfigurations = new ArrayList<>();
         List<HeartbeatConfiguration> heartbeatConfigurations = new ArrayList<>();
@@ -116,7 +120,7 @@ public class JobConfigurations {
             throw new M7rSchedulerInitializationException("The config directory does not exist: [" + configDir.toAbsolutePath() + "].");
 
         try {
-            List<Path> containingFiles = FileUtils.getRegularNonHiddenFilesInDirectory(configDir);
+            List<Path> containingFiles = FileHelper.getRegularFilesNotEndingWithTildeInDirectory(configDir);
             containingFiles.remove(new M7rSchedulerActiveFlagFile().asPath());
             containingFiles.remove(new M7rSchedulerConfigHashFile().asPath());
             return containingFiles;

@@ -49,8 +49,8 @@ public class Daemon {
 
             JobConfigurations jobConfigurations = JobConfigurations.create();
 
-            logger.info(jobConfigurations.getHeartbeatConfigurations() + " heartbeat jobs found.");
-            logger.info(jobConfigurations.getActivityStatWeeklyConfigurations() + " activityStatWeekly jobs found.");
+            logger.info(jobConfigurations.getHeartbeatConfigurations().size() + " heartbeat jobs found.");
+            logger.info(jobConfigurations.getActivityStatWeeklyConfigurations().size() + " activityStatWeekly jobs found.");
 
             JobInitializer.initialize(scheduler, jobConfigurations);
 
@@ -68,8 +68,9 @@ public class Daemon {
 //
 //            scheduler.scheduleJob(job, trigger);
 
-        } catch (SchedulerException e) {
+        } catch (SchedulerException | RuntimeException e) {
             logger.error("Starting daemon failed: " + e.getMessage(), e);
+            System.exit(1);
         }
 
     }
