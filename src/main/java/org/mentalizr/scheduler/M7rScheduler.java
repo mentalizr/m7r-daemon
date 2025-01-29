@@ -2,7 +2,7 @@ package org.mentalizr.scheduler;
 
 import de.arthurpicht.linuxWrapper.core.ps.Ps;
 import de.arthurpicht.processExecutor.ProcessResultCollection;
-import org.mentalizr.commons.DaemonPidFile;
+import org.mentalizr.scheduler.processManagement.DaemonPidFile;
 import org.mentalizr.scheduler.appInit.ApplicationInitialization;
 import org.mentalizr.scheduler.appInit.ApplicationInitializationException;
 import org.mentalizr.scheduler.configuration.JobConfigurations;
