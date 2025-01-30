@@ -2,6 +2,8 @@ package org.mentalizr.scheduler;
 
 import de.arthurpicht.linuxWrapper.core.ps.Ps;
 import de.arthurpicht.processExecutor.ProcessResultCollection;
+import org.mentalizr.scheduler.configuration.JobConfigurationsManager;
+import org.mentalizr.scheduler.jobInitialization.JobInitializer;
 import org.mentalizr.scheduler.processManagement.DaemonPidFile;
 import org.mentalizr.scheduler.appInit.ApplicationInitialization;
 import org.mentalizr.scheduler.appInit.ApplicationInitializationException;
@@ -46,7 +48,7 @@ public class M7rScheduler {
             Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
             addShutdownHook(scheduler);
 
-            JobConfigurations jobConfigurations = JobConfigurations.create();
+            JobConfigurations jobConfigurations = JobConfigurationsManager.fromConfigFiles();
 
             logger.info(jobConfigurations.getHeartbeatConfigurations().size() + " heartbeat jobs found.");
             logger.info(jobConfigurations.getActivityStatWeeklyConfigurations().size() + " activityStatWeekly jobs found.");

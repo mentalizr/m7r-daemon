@@ -1,5 +1,7 @@
 package org.mentalizr.scheduler.jobs;
 
+import org.mentalizr.scheduler.helper.StringHelper;
+
 public abstract class JobConfiguration {
 
     protected final BaseConfiguration baseConfiguration;
@@ -12,6 +14,11 @@ public abstract class JobConfiguration {
         return this.baseConfiguration;
     }
 
+    /**
+     * The returned job name is equals to the respective configuration file name.
+     *
+     * @return job name
+     */
     public String getJobName() {
         return this.getBaseConfiguration().getName();
     }
@@ -22,6 +29,11 @@ public abstract class JobConfiguration {
 
     public String getCronSchedule() {
         return this.getBaseConfiguration().getCronSchedule();
+    }
+
+    public String getTypeString() {
+        String simpleName = this.getClass().getSimpleName();
+        return StringHelper.cutOff(simpleName, "Configuration");
     }
 
 }

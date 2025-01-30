@@ -8,6 +8,8 @@ import java.util.Set;
 
 public final class ActivityStatWeeklyConfiguration extends JobConfiguration {
 
+    public static final String SECTION_NAME = "activity-stat-weekly";
+
     public static final String PROGRAMS = "programs";
     public static final String EXCLUDE_PROGRAMS = "exclude_programs";
     public static final String PROJECTS = "projects";

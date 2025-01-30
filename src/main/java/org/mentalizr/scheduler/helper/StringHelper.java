@@ -10,7 +10,8 @@ public class StringHelper {
         if (string.endsWith(cutoff)) {
             return string.substring(0, string.length() - cutoff.length());
         } else {
-            return string;
+            throw new IllegalArgumentException("Specified string [" + string + "] " +
+                    "does not end with specified cutoff [" + cutoff + "].");
         }
     }
 

@@ -5,6 +5,8 @@ import org.mentalizr.scheduler.jobs.JobConfiguration;
 
 public final class HeartbeatConfiguration extends JobConfiguration {
 
+    public static final String SECTION_NAME = "heartbeat";
+
     public static final String LOG_MESSAGE = "log-message";
 
     private final String logMessage;

@@ -14,7 +14,7 @@ class JobConfigurationsTest {
 
     @Test
     public void simpleTest() {
-        JobConfigurations jobConfigurations = new JobConfigurations(Paths.get("src/test/resources/configTest1"));
+        JobConfigurations jobConfigurations = JobConfigurationsManager.fromConfigFiles(Paths.get("src/test/resources/configTest1"));
         List<ActivityStatWeeklyConfiguration> activityStatWeeklyConfigurations = jobConfigurations.getActivityStatWeeklyConfigurations();
 
         assertEquals(1, activityStatWeeklyConfigurations.size());
