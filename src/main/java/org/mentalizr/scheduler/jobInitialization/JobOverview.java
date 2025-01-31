@@ -16,7 +16,7 @@ public class JobOverview {
 
     public record JobOverviewRecord(String name, String type, String nextExecutionTime) {}
 
-    public List<JobOverviewRecord> getJobOverviewRecords(JobConfigurations jobConfigurations) {
+    public static List<JobOverviewRecord> getJobOverviewRecords(JobConfigurations jobConfigurations) {
         List<JobOverviewRecord> jobOverviewRecords = new ArrayList<>();
         for (JobConfiguration jobConfiguration : jobConfigurations.getJobConfigurations()) {
             JobOverviewRecord jobOverviewRecord = getOverview(jobConfiguration);
@@ -25,14 +25,14 @@ public class JobOverview {
         return jobOverviewRecords;
     }
 
-    private JobOverviewRecord getOverview(JobConfiguration jobConfiguration) {
+    private static JobOverviewRecord getOverview(JobConfiguration jobConfiguration) {
         String name = jobConfiguration.getJobName();
         String type = jobConfiguration.getTypeString();
         String nextExecutionTime = getNextExecutionTime(jobConfiguration.getCronSchedule());
         return new JobOverviewRecord(name, type, nextExecutionTime);
     }
 
-    private String getNextExecutionTime(String cronExpressionString) {
+    private static String getNextExecutionTime(String cronExpressionString) {
         try {
             CronExpression cronExpression = new CronExpression(cronExpressionString);
             Date nextExecutionDate = cronExpression.getNextValidTimeAfter(Date.from(Instant.now()));
