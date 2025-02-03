@@ -1,14 +1,14 @@
 package org.mentalizr.scheduler;
 
-import de.arthurpicht.linuxWrapper.core.ps.Ps;
-import de.arthurpicht.processExecutor.ProcessResultCollection;
-import org.mentalizr.scheduler.configuration.JobConfigurationsManager;
-import org.mentalizr.scheduler.jobInitialization.JobInitializer;
-import org.mentalizr.scheduler.processManagement.DaemonPidFile;
 import org.mentalizr.scheduler.appInit.ApplicationInitialization;
 import org.mentalizr.scheduler.appInit.ApplicationInitializationException;
 import org.mentalizr.scheduler.configuration.JobConfigurations;
-import org.quartz.*;
+import org.mentalizr.scheduler.configuration.JobConfigurationsManager;
+import org.mentalizr.scheduler.helper.LinuxHelper;
+import org.mentalizr.scheduler.jobInitialization.JobInitializer;
+import org.mentalizr.scheduler.processManagement.DaemonPidFile;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,25 +49,9 @@ public class M7rScheduler {
             addShutdownHook(scheduler);
 
             JobConfigurations jobConfigurations = JobConfigurationsManager.fromConfigFiles();
-
-            logger.info(jobConfigurations.getHeartbeatConfigurations().size() + " heartbeat jobs found.");
-            logger.info(jobConfigurations.getActivityStatWeeklyConfigurations().size() + " activityStatWeekly jobs found.");
-
             JobInitializer.initialize(scheduler, jobConfigurations);
 
             scheduler.start();
-
-//            JobDetail job = JobBuilder.newJob(HeartbeatJob.class)
-//                    .withIdentity("heartbeat", "demo")
-//                    .build();
-//
-//            Trigger trigger = TriggerBuilder.newTrigger()
-//                    .withIdentity("heartbeat-trigger", "demo")
-//                    .startNow()
-//                    .withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(5).repeatForever())
-//                    .build();
-//
-//            scheduler.scheduleJob(job, trigger);
 
         } catch (SchedulerException | RuntimeException e) {
             logger.error("Starting daemon failed: " + e.getMessage(), e);
@@ -79,8 +63,7 @@ public class M7rScheduler {
     private static boolean alreadyRunning() {
         if (daemonPidFile.exists()) {
             long pid = daemonPidFile.getPid();
-            ProcessResultCollection processResultCollection = Ps.execute(Math.toIntExact(pid));
-            return !Ps.noProcessForPidFound(processResultCollection);
+            return LinuxHelper.hasProcess(pid);
         }
         return false;
     }

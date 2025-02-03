@@ -1,7 +1,7 @@
 package org.mentalizr.scheduler.jobs;
 
 import de.arthurpicht.configuration.Configuration;
-import org.mentalizr.scheduler.M7rSchedulerConfigurationException;
+import org.mentalizr.scheduler.helper.ConfigurationHelper;
 
 import java.nio.file.Path;
 import java.util.Set;
@@ -20,22 +20,12 @@ public abstract class JobConfigurationParser {
 
     public abstract JobConfiguration parse();
 
-    protected void checkForParameterSyntaxErrors(Set<String> validParameters) {
-        Set<String> keys = this.configuration.getKeys();
-        for (String key : keys) {
-            if (!validParameters.contains(key))
-                throw new M7rSchedulerConfigurationException("Illegal parameter [" + key + "] " +
-                                                             "in configuration file [" + this.configurationFile.toAbsolutePath() + "].");
-        }
+    protected void checkForParameterSyntaxErrors(Set<String> occurringParameters) {
+        ConfigurationHelper.checkForParameterSyntaxErrors(this.configurationFile, this.configuration, occurringParameters);
     }
 
     protected void checkForMandatoryParameters(Set<String> mandatoryParameters) {
-        Set<String> keys = configuration.getKeys();
-        for (String parameter : mandatoryParameters) {
-            if (!keys.contains(parameter))
-                throw new M7rSchedulerConfigurationException("Mandatory parameter [" + parameter + "] " +
-                                                             "not found in configuration file [" + this.configurationFile.toAbsolutePath() + "].");
-        }
+        ConfigurationHelper.checkForParameterSyntaxErrors(this.configurationFile, this.configuration, mandatoryParameters);
     }
 
 }

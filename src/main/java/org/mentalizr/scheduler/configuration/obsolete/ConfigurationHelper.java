@@ -38,5 +38,4 @@ public class ConfigurationHelper {
         return configuration.getInt(name);
     }
 
-
 }

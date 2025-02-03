@@ -6,6 +6,7 @@ import de.arthurpicht.configuration.ConfigurationFileNotFoundException;
 import org.mentalizr.scheduler.M7rSchedulerConfigurationException;
 import org.mentalizr.scheduler.M7rSchedulerException;
 import org.mentalizr.scheduler.jobs.BaseConfiguration;
+import org.mentalizr.scheduler.jobs.BaseConfigurationParser;
 import org.mentalizr.scheduler.jobs.JobConfiguration;
 import org.mentalizr.scheduler.jobs.activityStatWeekly.ActivityStatWeeklyConfiguration;
 import org.mentalizr.scheduler.jobs.activityStatWeekly.ActivityStatWeeklyConfigurationParser;
@@ -59,12 +60,7 @@ public class JobConfigurationFactory {
 
     private static BaseConfiguration getBaseConfiguration(Path configurationFile, ConfigurationFactory configurationFactory) {
         Configuration configuration = configurationFactory.getConfiguration();
-        if (!configuration.containsKey(BaseConfiguration.CRON_SCHEDULE))
-            throw new M7rSchedulerException("Configuration file [" + configurationFile.toAbsolutePath() + "] " +
-                    "does not contain [" + BaseConfiguration.CRON_SCHEDULE + "] parameter.");
-        String name = configurationFile.getFileName().toString();
-        String cronSchedule = configuration.getString(BaseConfiguration.CRON_SCHEDULE);
-        return new BaseConfiguration(name, cronSchedule);
+        return BaseConfigurationParser.parse(configurationFile, configuration);
     }
 
 }

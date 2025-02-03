@@ -17,7 +17,6 @@ public class M7rSchedulerJobFactory implements JobFactory {
 
     @Override
     public Job newJob(TriggerFiredBundle bundle, Scheduler scheduler) {
-//            Job job = bundle.getJobDetail().getJobClass().getDeclaredConstructor().newInstance();
         return SchedulerJobFactory.create(this.jobConfiguration);
     }
 

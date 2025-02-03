@@ -1,5 +1,6 @@
 package org.mentalizr.scheduler;
 
+@SuppressWarnings("unused")
 public class M7rSchedulerConfigurationException extends M7rSchedulerInitializationException {
 
     public M7rSchedulerConfigurationException() {

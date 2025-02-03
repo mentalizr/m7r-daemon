@@ -14,7 +14,7 @@ import java.util.List;
 
 public class JobOverview {
 
-    public record JobOverviewRecord(String name, String type, String nextExecutionTime) {}
+    public record JobOverviewRecord(boolean enabled, String name, String type, String cronSchedule, String nextExecutionTime) {}
 
     public static List<JobOverviewRecord> getJobOverviewRecords(JobConfigurations jobConfigurations) {
         List<JobOverviewRecord> jobOverviewRecords = new ArrayList<>();
@@ -26,10 +26,12 @@ public class JobOverview {
     }
 
     private static JobOverviewRecord getOverview(JobConfiguration jobConfiguration) {
+        boolean enabled = jobConfiguration.getBaseConfiguration().isEnabled();
         String name = jobConfiguration.getJobName();
         String type = jobConfiguration.getTypeString();
+        String cronSchedule = jobConfiguration.getCronSchedule();
         String nextExecutionTime = getNextExecutionTime(jobConfiguration.getCronSchedule());
-        return new JobOverviewRecord(name, type, nextExecutionTime);
+        return new JobOverviewRecord(enabled, name, type, cronSchedule, nextExecutionTime);
     }
 
     private static String getNextExecutionTime(String cronExpressionString) {

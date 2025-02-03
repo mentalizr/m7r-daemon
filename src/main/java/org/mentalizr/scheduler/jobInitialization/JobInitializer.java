@@ -1,10 +1,8 @@
 package org.mentalizr.scheduler.jobInitialization;
 
 import org.mentalizr.scheduler.configuration.JobConfigurations;
-import org.mentalizr.scheduler.jobs.JobConfiguration;
 import org.mentalizr.scheduler.jobFactories.SchedulerJobFactory;
-import org.mentalizr.scheduler.jobs.activityStatWeekly.ActivityStatWeeklyConfiguration;
-import org.mentalizr.scheduler.jobs.heartbeat.HeartbeatConfiguration;
+import org.mentalizr.scheduler.jobs.JobConfiguration;
 import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,11 +12,8 @@ public class JobInitializer {
     private static final Logger logger = LoggerFactory.getLogger(JobInitializer.class);
 
     public static void initialize(Scheduler scheduler, JobConfigurations jobConfigurations) throws SchedulerException {
-        for (ActivityStatWeeklyConfiguration activityStatWeeklyConfiguration : jobConfigurations.getActivityStatWeeklyConfigurations()) {
-            scheduleJob(scheduler, activityStatWeeklyConfiguration);
-        }
-        for (HeartbeatConfiguration heartbeatConfiguration : jobConfigurations.getHeartbeatConfigurations()) {
-            scheduleJob(scheduler, heartbeatConfiguration);
+        for (JobConfiguration jobConfiguration : jobConfigurations.getJobConfigurations()) {
+            scheduleJob(scheduler, jobConfiguration);
         }
     }
 
@@ -48,10 +43,5 @@ public class JobInitializer {
 
         scheduler.scheduleJob(job, trigger);
     }
-
-//    private static String getJobTypeName(Class<? extends JobConfiguration> jobConfigurationClass) {
-//        String simpleName = jobConfigurationClass.getSimpleName();
-//        return StringHelper.cutOff(simpleName, "Configuration");
-//    }
 
 }

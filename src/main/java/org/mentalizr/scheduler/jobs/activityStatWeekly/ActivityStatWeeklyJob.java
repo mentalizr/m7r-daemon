@@ -9,7 +9,6 @@ import org.mentalizr.clientSdk.ClientSdkException;
 import org.mentalizr.clientSdk.SessionAgent;
 import org.mentalizr.clientSdk.activityStat.ActivityStat;
 import org.mentalizr.clientSdk.activityStat.ActivityStatRequest;
-import org.mentalizr.scheduler.jobs.JobHelper;
 import org.mentalizr.scheduler.jobs.SchedulerJob;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -23,20 +22,16 @@ public class ActivityStatWeeklyJob extends SchedulerJob implements Job {
 
     public static final String NAME = "activity-stat-weekly";
 
-    private static final Logger logger = LoggerFactory.getLogger(ActivityStatWeeklyJob.class);
-
-    private final ActivityStatWeeklyConfiguration activityStatWeeklyConfiguration;
-
     public ActivityStatWeeklyJob(ActivityStatWeeklyConfiguration activityStatWeeklyConfiguration) {
-        this.activityStatWeeklyConfiguration = activityStatWeeklyConfiguration;
+        this.jobConfiguration = activityStatWeeklyConfiguration;
+    }
+
+    public ActivityStatWeeklyConfiguration getActivityStatWeeklyConfiguration() {
+        return (ActivityStatWeeklyConfiguration) this.jobConfiguration;
     }
 
     @Override
     public void schedulerExecute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        if (JobHelper.isInactive()) {
-            logger.info("Execution prevented. Scheduler is configured to be inactive.");
-        }
-
         ActivityStatPeriod activityStatPeriod = new ActivityStatPeriod(new PeriodWeek(-1));
         ActivityStatRequest activityStatRequest = createActivityStatRequest(activityStatPeriod);
 
@@ -50,36 +45,38 @@ public class ActivityStatWeeklyJob extends SchedulerJob implements Job {
     }
 
     private ActivityStatRequest createActivityStatRequest(ActivityStatPeriod activityStatPeriod) {
+        ActivityStatWeeklyConfiguration activityStatWeeklyConfiguration = getActivityStatWeeklyConfiguration();
+
         ActivityStatRequest.Builder activityStatRequestBuilder =
                 new ActivityStatRequest.Builder()
                         .withFromTimestamp(activityStatPeriod.getFromTimestamp())
                         .withUntilTimestamp(activityStatPeriod.getUntilTimestamp());
 
-        if (this.activityStatWeeklyConfiguration.hasPrograms()) {
+        if (activityStatWeeklyConfiguration.hasPrograms()) {
             activityStatRequestBuilder
                     .withProgramsIncludeMode(true)
-                    .withPrograms(this.activityStatWeeklyConfiguration.getPrograms());
+                    .withPrograms(activityStatWeeklyConfiguration.getPrograms());
         }
 
-        if (this.activityStatWeeklyConfiguration.hasExcludePrograms()) {
+        if (activityStatWeeklyConfiguration.hasExcludePrograms()) {
             activityStatRequestBuilder
                     .withProjectIncludeMode(false)
-                    .withPrograms(this.activityStatWeeklyConfiguration.getExcludePrograms());
+                    .withPrograms(activityStatWeeklyConfiguration.getExcludePrograms());
         }
 
-        if (this.activityStatWeeklyConfiguration.hasProjects()) {
+        if (activityStatWeeklyConfiguration.hasProjects()) {
             activityStatRequestBuilder
                     .withProjectIncludeMode(true)
-                    .withProjects(this.activityStatWeeklyConfiguration.getProjects());
+                    .withProjects(activityStatWeeklyConfiguration.getProjects());
         }
 
-        if (this.activityStatWeeklyConfiguration.hasExcludeProjects()) {
+        if (activityStatWeeklyConfiguration.hasExcludeProjects()) {
             activityStatRequestBuilder
                     .withProjectIncludeMode(false)
-                    .withProjects(this.activityStatWeeklyConfiguration.getExcludeProjects());
+                    .withProjects(activityStatWeeklyConfiguration.getExcludeProjects());
         }
 
-        List<String> mailRecipients = this.activityStatWeeklyConfiguration.getRecipients();
+        List<String> mailRecipients = activityStatWeeklyConfiguration.getRecipients();
         activityStatRequestBuilder
                 .withSendAsMail(true)
                 .withMailRecipients(mailRecipients)

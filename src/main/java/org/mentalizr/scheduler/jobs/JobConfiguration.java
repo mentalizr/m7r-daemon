@@ -33,7 +33,8 @@ public abstract class JobConfiguration {
 
     public String getTypeString() {
         String simpleName = this.getClass().getSimpleName();
-        return StringHelper.cutOff(simpleName, "Configuration");
+        String typeString = StringHelper.cutOff(simpleName, "Configuration");
+        return typeString.substring(0, 1).toLowerCase() + typeString.substring(1);
     }
 
 }

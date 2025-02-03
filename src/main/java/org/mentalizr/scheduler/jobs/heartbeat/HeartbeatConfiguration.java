@@ -19,10 +19,6 @@ public final class HeartbeatConfiguration extends JobConfiguration {
         this.logMessage = logMessage;
     }
 
-    public boolean hasLogMessage() {
-        return logMessage != null;
-    }
-
     public String logMessage() {
         return logMessage;
     }

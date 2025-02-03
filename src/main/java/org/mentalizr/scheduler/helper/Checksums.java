@@ -11,6 +11,7 @@ import java.util.List;
 
 public class Checksums {
 
+    @SuppressWarnings("unused")
     public static String computeSha256Checksum(Path path) throws NoSuchAlgorithmException, IOException {
         if (!FileUtils.isExistingRegularFile(path))
             throw new IllegalArgumentException("Path reference [" + path.toAbsolutePath() + "] " +

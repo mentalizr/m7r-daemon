@@ -19,6 +19,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("StringConcatenationArgumentToLogCall")
 public class JobConfigurationsManager {
 
     private static final Logger logger = LoggerFactory.getLogger(JobConfigurationsManager.class);
@@ -30,9 +31,9 @@ public class JobConfigurationsManager {
     public static JobConfigurations fromConfigFiles(Path configDir) {
         List<Path> configurationFiles = scanSchedulerConfigDir(configDir);
 
-        logger.info(configurationFiles.size() + " configuration files found.");
+        logger.debug(configurationFiles.size() + " configuration files found.");
         for (Path path : configurationFiles) {
-            logger.info("configuration file: " + path.toString());
+            logger.debug("found configuration file: " + path.toString());
         }
 
         List<JobConfiguration> jobConfigurations = new ArrayList<>();
