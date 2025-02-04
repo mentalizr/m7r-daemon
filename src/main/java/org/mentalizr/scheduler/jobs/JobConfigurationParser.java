@@ -25,7 +25,7 @@ public abstract class JobConfigurationParser {
     }
 
     protected void checkForMandatoryParameters(Set<String> mandatoryParameters) {
-        ConfigurationHelper.checkForParameterSyntaxErrors(this.configurationFile, this.configuration, mandatoryParameters);
+        ConfigurationHelper.checkForMandatoryParameters(this.configurationFile, this.configuration, mandatoryParameters);
     }
 
 }

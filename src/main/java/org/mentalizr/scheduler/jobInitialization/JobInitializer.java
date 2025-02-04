@@ -36,7 +36,7 @@ public class JobInitializer {
                 .build();
 
         Trigger trigger = TriggerBuilder.newTrigger()
-                .withIdentity(triggerName, jobTypeName)
+                .withIdentity(triggerName, jobTypeName + "-trigger")
                 .startNow()
                 .withSchedule(CronScheduleBuilder.cronSchedule(cronSchedule))
                 .build();

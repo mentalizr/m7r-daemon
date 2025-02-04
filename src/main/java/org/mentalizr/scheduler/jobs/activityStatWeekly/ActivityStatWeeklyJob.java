@@ -22,6 +22,8 @@ public class ActivityStatWeeklyJob extends SchedulerJob implements Job {
 
     public static final String NAME = "activity-stat-weekly";
 
+    private static final Logger logger = LoggerFactory.getLogger(ActivityStatWeeklyJob.class);
+
     public ActivityStatWeeklyJob(ActivityStatWeeklyConfiguration activityStatWeeklyConfiguration) {
         this.jobConfiguration = activityStatWeeklyConfiguration;
     }
@@ -32,16 +34,19 @@ public class ActivityStatWeeklyJob extends SchedulerJob implements Job {
 
     @Override
     public void schedulerExecute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        ActivityStatPeriod activityStatPeriod = new ActivityStatPeriod(new PeriodWeek(-1));
-        ActivityStatRequest activityStatRequest = createActivityStatRequest(activityStatPeriod);
 
-        try {
-            SessionAgent sessionAgent = SessionAgent.createFromLocalConfigWithTransientCookieStorage();
-            MailConfiguration mailConfiguration = obtainMailConfiguration();
-            ActivityStat.exec(sessionAgent.getRESTCallContext(), activityStatRequest, mailConfiguration, false);
-        } catch (ClientSdkException e) {
-            throw new JobExecutionException(e);
-        }
+        logger.info("Message from activity-stat-weekly.");
+
+//        ActivityStatPeriod activityStatPeriod = new ActivityStatPeriod(new PeriodWeek(-1));
+//        ActivityStatRequest activityStatRequest = createActivityStatRequest(activityStatPeriod);
+//
+//        try {
+//            SessionAgent sessionAgent = SessionAgent.createFromLocalConfigWithTransientCookieStorage();
+//            MailConfiguration mailConfiguration = obtainMailConfiguration();
+//            ActivityStat.exec(sessionAgent.getRESTCallContext(), activityStatRequest, mailConfiguration, false);
+//        } catch (ClientSdkException e) {
+//            throw new JobExecutionException(e);
+//        }
     }
 
     private ActivityStatRequest createActivityStatRequest(ActivityStatPeriod activityStatPeriod) {

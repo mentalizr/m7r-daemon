@@ -43,9 +43,17 @@ public class JobConfigurationsManager {
             jobConfigurations.add(jobConfiguration);
         }
 
-        saveHash(configurationFiles);
-
         return new JobConfigurations(jobConfigurations);
+    }
+
+    public static void saveHash() {
+        Path configDir = new M7rSchedulerConfigDir().asPath();
+        saveHash(configDir);
+    }
+
+    public static void saveHash(Path configDir) {
+        List<Path> configurationFiles = scanSchedulerConfigDir(configDir);
+        saveHashToFile(configurationFiles);
     }
 
     public static boolean hasConsistentConfiguration() {
@@ -88,7 +96,7 @@ public class JobConfigurationsManager {
         }
     }
 
-    private static void saveHash(List<Path> configurationFiles) {
+    private static void saveHashToFile(List<Path> configurationFiles) {
         try {
             String hash = Checksums.computeSha256Checksum(configurationFiles);
             SchedulerConfigHashFile.write(hash);
