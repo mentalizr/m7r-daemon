@@ -1,5 +1,6 @@
 package org.mentalizr.scheduler.jobs;
 
+@SuppressWarnings("ClassCanBeRecord")
 public class BaseConfiguration {
 
     public static final String CRON_SCHEDULE = "cron-schedule";

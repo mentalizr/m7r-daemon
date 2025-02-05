@@ -1,5 +1,6 @@
 package org.mentalizr.scheduler.jobs.activityStatWeekly;
 
+import com.google.gson.Gson;
 import org.mentalizr.cli.commands.user.activity.stat.activityStatPeriod.ActivityStatPeriod;
 import org.mentalizr.cli.commands.user.activity.stat.activityStatPeriod.PeriodWeek;
 import org.mentalizr.cli.config.CliConfiguration;
@@ -9,6 +10,7 @@ import org.mentalizr.clientSdk.ClientSdkException;
 import org.mentalizr.clientSdk.SessionAgent;
 import org.mentalizr.clientSdk.activityStat.ActivityStat;
 import org.mentalizr.clientSdk.activityStat.ActivityStatRequest;
+import org.mentalizr.scheduler.jobs.JobConfiguration;
 import org.mentalizr.scheduler.jobs.SchedulerJob;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -24,16 +26,19 @@ public class ActivityStatWeeklyJob extends SchedulerJob implements Job {
 
     private static final Logger logger = LoggerFactory.getLogger(ActivityStatWeeklyJob.class);
 
-    public ActivityStatWeeklyJob(ActivityStatWeeklyConfiguration activityStatWeeklyConfiguration) {
-        this.jobConfiguration = activityStatWeeklyConfiguration;
-    }
+//    public ActivityStatWeeklyJob(ActivityStatWeeklyConfiguration activityStatWeeklyConfiguration) {
+//        this.jobConfiguration = activityStatWeeklyConfiguration;
+//    }
 
-    public ActivityStatWeeklyConfiguration getActivityStatWeeklyConfiguration() {
-        return (ActivityStatWeeklyConfiguration) this.jobConfiguration;
-    }
+//    public ActivityStatWeeklyConfiguration getActivityStatWeeklyConfiguration() {
+//        return (ActivityStatWeeklyConfiguration) this.jobConfiguration;
+//    }
 
     @Override
-    public void schedulerExecute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+    public void schedulerExecute(JobExecutionContext jobExecutionContext, String jobConfiguration) throws JobExecutionException {
+
+        ActivityStatWeeklyConfiguration activityStatWeeklyConfiguration
+                = new Gson().fromJson(jobConfiguration, ActivityStatWeeklyConfiguration.class);
 
         logger.info("Message from activity-stat-weekly.");
 
@@ -49,8 +54,11 @@ public class ActivityStatWeeklyJob extends SchedulerJob implements Job {
 //        }
     }
 
-    private ActivityStatRequest createActivityStatRequest(ActivityStatPeriod activityStatPeriod) {
-        ActivityStatWeeklyConfiguration activityStatWeeklyConfiguration = getActivityStatWeeklyConfiguration();
+    private ActivityStatRequest createActivityStatRequest(
+            ActivityStatPeriod activityStatPeriod,
+            ActivityStatWeeklyConfiguration activityStatWeeklyConfiguration
+    ) {
+//        ActivityStatWeeklyConfiguration activityStatWeeklyConfiguration = getActivityStatWeeklyConfiguration();
 
         ActivityStatRequest.Builder activityStatRequestBuilder =
                 new ActivityStatRequest.Builder()

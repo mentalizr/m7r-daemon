@@ -58,7 +58,10 @@ public class JobConfigurationFactory {
         return configurationFactory;
     }
 
-    private static BaseConfiguration getBaseConfiguration(Path configurationFile, ConfigurationFactory configurationFactory) {
+    private static BaseConfiguration getBaseConfiguration(
+            Path configurationFile,
+            ConfigurationFactory configurationFactory) {
+
         Configuration configuration = configurationFactory.getConfiguration();
         return BaseConfigurationParser.parse(configurationFile, configuration);
     }

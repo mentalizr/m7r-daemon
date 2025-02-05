@@ -1,5 +1,6 @@
 package org.mentalizr.scheduler.jobs.heartbeat;
 
+import com.google.gson.Gson;
 import org.mentalizr.scheduler.jobs.SchedulerJob;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -10,13 +11,9 @@ public class HeartbeatJob extends SchedulerJob implements Job {
 
     private static final Logger logger = LoggerFactory.getLogger(HeartbeatJob.class);
 
-    public HeartbeatJob(HeartbeatConfiguration heartbeatConfiguration) {
-        this.jobConfiguration = heartbeatConfiguration;
-    }
-
     @Override
-    public void schedulerExecute(JobExecutionContext jobExecutionContext) {
-        HeartbeatConfiguration heartbeatConfiguration = (HeartbeatConfiguration) this.jobConfiguration;
+    public void schedulerExecute(JobExecutionContext jobExecutionContext, String jobConfiguration) {
+        HeartbeatConfiguration heartbeatConfiguration = new Gson().fromJson(jobConfiguration, HeartbeatConfiguration.class);
         String logMessage = heartbeatConfiguration.logMessage();
         logger.info(logMessage);
     }

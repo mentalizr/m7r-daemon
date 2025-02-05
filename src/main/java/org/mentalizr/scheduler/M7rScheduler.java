@@ -7,17 +7,11 @@ import org.mentalizr.scheduler.configuration.JobConfigurationsManager;
 import org.mentalizr.scheduler.helper.LinuxHelper;
 import org.mentalizr.scheduler.jobInitialization.JobInitializer;
 import org.mentalizr.scheduler.processManagement.DaemonPidFile;
-import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
-import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
-import org.quartz.impl.matchers.GroupMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Date;
-import java.util.List;
 
 @SuppressWarnings("StringConcatenationArgumentToLogCall")
 public class M7rScheduler {
@@ -54,11 +48,11 @@ public class M7rScheduler {
             Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
             addShutdownHook(scheduler);
 
+            logger.info("load configuration ...");
             JobConfigurations jobConfigurations = JobConfigurationsManager.fromConfigFiles();
+            logger.info("initialize scheduler ...");
             JobInitializer.initialize(scheduler, jobConfigurations);
             JobConfigurationsManager.saveHash();
-
-            logOutJobs(scheduler);
 
             scheduler.start();
 
@@ -92,29 +86,6 @@ public class M7rScheduler {
             logger.info("Scheduler is shut down.");
         });
         Runtime.getRuntime().addShutdownHook(shutdownHook);
-    }
-
-    private static void logOutJobs(Scheduler scheduler) throws SchedulerException {
-
-        logger.debug("Logging out jobs...");
-
-        for (String groupName : scheduler.getJobGroupNames()) {
-
-            for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
-
-                String jobName = jobKey.getName();
-                String jobGroup = jobKey.getGroup();
-
-                //get job's trigger
-                List<Trigger> triggers = (List<Trigger>) scheduler.getTriggersOfJob(jobKey);
-                Date nextFireTime = triggers.get(0).getNextFireTime();
-
-                logger.debug("[jobName] : " + jobName + " [groupName] : "
-                        + jobGroup + " - " + nextFireTime);
-
-            }
-
-        }
     }
 
 }
