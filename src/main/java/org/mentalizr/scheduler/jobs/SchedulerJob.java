@@ -11,11 +11,14 @@ import java.util.Arrays;
 
 import static org.mentalizr.scheduler.Const.CONFIGURATION_KEY;
 
+@SuppressWarnings("StringConcatenationArgumentToLogCall")
 public abstract class SchedulerJob implements Job {
 
     private static final Logger logger = LoggerFactory.getLogger(SchedulerJob.class);
 
     public abstract void schedulerExecute(JobExecutionContext context, String jobConfiguration) throws JobExecutionException;
+
+    public abstract JobConfiguration getJobConfiguration(String jobConfigurationJson);
 
     @Override
     public final void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
@@ -23,8 +26,13 @@ public abstract class SchedulerJob implements Job {
             logger.info("Scheduler is configured as deactivated. Skipping execution.");
             return;
         }
-        String jobConfiguration = getJobConfigurationAsJson(jobExecutionContext);
-        schedulerExecute(jobExecutionContext, jobConfiguration);
+        String jobConfigurationJson = getJobConfigurationAsJson(jobExecutionContext);
+        JobConfiguration jobConfiguration = getJobConfiguration(jobConfigurationJson);
+        if (!jobConfiguration.baseConfiguration.isEnabled()) {
+            logger.info("Job [" + jobConfiguration.getJobName() + "] is configured as disabled. Skipping execution.");
+            return;
+        }
+        schedulerExecute(jobExecutionContext, jobConfigurationJson);
     }
 
     private String getJobConfigurationAsJson(JobExecutionContext jobExecutionContext) {

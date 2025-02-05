@@ -10,7 +10,6 @@ import org.mentalizr.clientSdk.ClientSdkException;
 import org.mentalizr.clientSdk.SessionAgent;
 import org.mentalizr.clientSdk.activityStat.ActivityStat;
 import org.mentalizr.clientSdk.activityStat.ActivityStatRequest;
-import org.mentalizr.scheduler.jobs.JobConfiguration;
 import org.mentalizr.scheduler.jobs.SchedulerJob;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -18,84 +17,40 @@ import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-
+@SuppressWarnings("StringConcatenationArgumentToLogCall")
 public class ActivityStatWeeklyJob extends SchedulerJob implements Job {
-
-    public static final String NAME = "activity-stat-weekly";
 
     private static final Logger logger = LoggerFactory.getLogger(ActivityStatWeeklyJob.class);
 
-//    public ActivityStatWeeklyJob(ActivityStatWeeklyConfiguration activityStatWeeklyConfiguration) {
-//        this.jobConfiguration = activityStatWeeklyConfiguration;
-//    }
-
-//    public ActivityStatWeeklyConfiguration getActivityStatWeeklyConfiguration() {
-//        return (ActivityStatWeeklyConfiguration) this.jobConfiguration;
-//    }
-
     @Override
-    public void schedulerExecute(JobExecutionContext jobExecutionContext, String jobConfiguration) throws JobExecutionException {
+    public void schedulerExecute(JobExecutionContext jobExecutionContext, String jobConfigurationJson)
+            throws JobExecutionException {
 
         ActivityStatWeeklyConfiguration activityStatWeeklyConfiguration
-                = new Gson().fromJson(jobConfiguration, ActivityStatWeeklyConfiguration.class);
+                = getJobConfiguration(jobConfigurationJson);
 
-        logger.info("Message from activity-stat-weekly.");
+        logger.info("Starting job [" + activityStatWeeklyConfiguration.getJobName() + "] ...");
 
-//        ActivityStatPeriod activityStatPeriod = new ActivityStatPeriod(new PeriodWeek(-1));
-//        ActivityStatRequest activityStatRequest = createActivityStatRequest(activityStatPeriod);
-//
-//        try {
-//            SessionAgent sessionAgent = SessionAgent.createFromLocalConfigWithTransientCookieStorage();
-//            MailConfiguration mailConfiguration = obtainMailConfiguration();
-//            ActivityStat.exec(sessionAgent.getRESTCallContext(), activityStatRequest, mailConfiguration, false);
-//        } catch (ClientSdkException e) {
-//            throw new JobExecutionException(e);
-//        }
+        ActivityStatPeriod activityStatPeriod = new ActivityStatPeriod(new PeriodWeek(-1));
+        ActivityStatRequest activityStatRequest
+                = ActivityStatWeeklyHelper.createActivityStatRequest(
+                activityStatPeriod,
+                activityStatWeeklyConfiguration);
+
+        try {
+            SessionAgent sessionAgent = SessionAgent.createFromLocalConfigWithTransientCookieStorage();
+            MailConfiguration mailConfiguration = obtainMailConfiguration();
+            ActivityStat.exec(sessionAgent.getRESTCallContext(), activityStatRequest, mailConfiguration, false);
+        } catch (ClientSdkException e) {
+            throw new JobExecutionException(e);
+        }
+
+        logger.info("Job [" + activityStatWeeklyConfiguration.getJobName() + "] executed successfully.");
     }
 
-    private ActivityStatRequest createActivityStatRequest(
-            ActivityStatPeriod activityStatPeriod,
-            ActivityStatWeeklyConfiguration activityStatWeeklyConfiguration
-    ) {
-//        ActivityStatWeeklyConfiguration activityStatWeeklyConfiguration = getActivityStatWeeklyConfiguration();
-
-        ActivityStatRequest.Builder activityStatRequestBuilder =
-                new ActivityStatRequest.Builder()
-                        .withFromTimestamp(activityStatPeriod.getFromTimestamp())
-                        .withUntilTimestamp(activityStatPeriod.getUntilTimestamp());
-
-        if (activityStatWeeklyConfiguration.hasPrograms()) {
-            activityStatRequestBuilder
-                    .withProgramsIncludeMode(true)
-                    .withPrograms(activityStatWeeklyConfiguration.getPrograms());
-        }
-
-        if (activityStatWeeklyConfiguration.hasExcludePrograms()) {
-            activityStatRequestBuilder
-                    .withProjectIncludeMode(false)
-                    .withPrograms(activityStatWeeklyConfiguration.getExcludePrograms());
-        }
-
-        if (activityStatWeeklyConfiguration.hasProjects()) {
-            activityStatRequestBuilder
-                    .withProjectIncludeMode(true)
-                    .withProjects(activityStatWeeklyConfiguration.getProjects());
-        }
-
-        if (activityStatWeeklyConfiguration.hasExcludeProjects()) {
-            activityStatRequestBuilder
-                    .withProjectIncludeMode(false)
-                    .withProjects(activityStatWeeklyConfiguration.getExcludeProjects());
-        }
-
-        List<String> mailRecipients = activityStatWeeklyConfiguration.getRecipients();
-        activityStatRequestBuilder
-                .withSendAsMail(true)
-                .withMailRecipients(mailRecipients)
-                .withMailSubject("Wöchentliche Aktivitätsstatistik");
-
-        return activityStatRequestBuilder.build();
+    @Override
+    public ActivityStatWeeklyConfiguration getJobConfiguration(String jobConfigurationJson) {
+        return new Gson().fromJson(jobConfigurationJson, ActivityStatWeeklyConfiguration.class);
     }
 
     private MailConfiguration obtainMailConfiguration() throws JobExecutionException {

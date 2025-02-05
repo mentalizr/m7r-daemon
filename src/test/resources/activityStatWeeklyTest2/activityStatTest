@@ -1,0 +1,7 @@
+cron-schedule = 0 6 * * MON
+
+[activity-stat-weekly]
+
+projects = demo-1, demo-2
+programs = prog-1, prog-2
+recipients = dummy@example.com
