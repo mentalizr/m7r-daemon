@@ -1,11 +1,11 @@
 package org.mentalizr.scheduler.jobs.activityStatWeekly;
 
 import com.google.gson.Gson;
+import org.mentalizer.mailer.MailConfiguration;
+import org.mentalizer.mailer.MailConfigurationException;
+import org.mentalizer.mailer.MailConfigurationLoader;
 import org.mentalizr.cli.commands.user.activity.stat.activityStatPeriod.ActivityStatPeriod;
 import org.mentalizr.cli.commands.user.activity.stat.activityStatPeriod.PeriodWeek;
-import org.mentalizr.cli.config.CliConfiguration;
-import org.mentalizr.cli.config.CliConfigurationBinder;
-import org.mentalizr.cli.config.MailConfiguration;
 import org.mentalizr.clientSdk.ClientSdkException;
 import org.mentalizr.clientSdk.SessionAgent;
 import org.mentalizr.clientSdk.activityStat.ActivityStat;
@@ -54,10 +54,11 @@ public class ActivityStatWeeklyJob extends SchedulerJob implements Job {
     }
 
     private MailConfiguration obtainMailConfiguration() throws JobExecutionException {
-        CliConfiguration cliConfiguration = CliConfigurationBinder.bindConfiguration();
-        if (!cliConfiguration.hasMailConfiguration())
-            throw new JobExecutionException("No mail configuration found in local m7r-cli configuration file.");
-        return cliConfiguration.getMailConfiguration();
+        try {
+            return MailConfigurationLoader.load();
+        } catch (MailConfigurationException e) {
+            throw new RuntimeException("Error loading mail configuration: " + e.getMessage(), e);
+        }
     }
 
 }

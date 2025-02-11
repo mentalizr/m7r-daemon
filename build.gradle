@@ -14,6 +14,7 @@ dependencies {
 
     implementation libs.m7r.commons
     implementation libs.m7r.cli
+    implementation libs.m7r.mailer
     implementation libs.m7r.serviceObjects
 
     implementation libs.ap.utils.core
