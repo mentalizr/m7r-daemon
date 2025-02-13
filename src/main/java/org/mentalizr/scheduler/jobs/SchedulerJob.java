@@ -1,5 +1,9 @@
 package org.mentalizr.scheduler.jobs;
 
+import org.mentalizer.mailer.notifier.MailNotifier;
+import org.mentalizr.scheduler.SchedulerMailNotifierCallback;
+import org.mentalizr.scheduler.helper.ExceptionUtils;
+import org.mentalizr.scheduler.helper.LocalHost;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
@@ -32,7 +36,16 @@ public abstract class SchedulerJob implements Job {
             logger.info("Job [" + jobConfiguration.getJobName() + "] is configured as disabled. Skipping execution.");
             return;
         }
-        schedulerExecute(jobExecutionContext, jobConfigurationJson);
+        try {
+            schedulerExecute(jobExecutionContext, jobConfigurationJson);
+            if (jobConfiguration.getBaseConfiguration().isNotifyOnSuccess())
+                sendNotificationOnSuccess(jobConfiguration);
+        } catch (JobExecutionException | RuntimeException e) {
+            logger.error("Error executing job [" + jobConfiguration.getJobName() + "]", e);
+            if (jobConfiguration.getBaseConfiguration().isNotifyOnFailure())
+                sendNotificationOnFailure(jobConfiguration, e);
+            throw e;
+        }
     }
 
     private String getJobConfigurationAsJson(JobExecutionContext jobExecutionContext) {
@@ -41,6 +54,31 @@ public abstract class SchedulerJob implements Job {
         if (!Arrays.asList(contextKeys).contains(CONFIGURATION_KEY))
             throw new IllegalStateException("Job context does not contain configuration.");
         return jobDataMap.getString(CONFIGURATION_KEY);
+    }
+
+    private void sendNotificationOnSuccess(JobConfiguration jobConfiguration) {
+        SchedulerMailNotifierCallback callback = new SchedulerMailNotifierCallback();
+        String hostname = LocalHost.getHostname();
+        MailNotifier.sendNotification(
+                "[" + hostname + "] Scheduler job executed: [" + jobConfiguration.getJobName() + "].",
+                "Successfully executed job [" + jobConfiguration.getJobName() + "] on [" + hostname + "].\n\n"
+                + "This is a automatically generated notification. Please do not reply.",
+                callback
+        );
+    }
+
+    private void sendNotificationOnFailure(JobConfiguration jobConfiguration, Exception e) {
+        SchedulerMailNotifierCallback callback = new SchedulerMailNotifierCallback();
+        String hostname = LocalHost.getHostname();
+        String stacktrace = ExceptionUtils.getStackTrace(e);
+        MailNotifier.sendNotification(
+                "[" + hostname + "] Scheduler job execution FAILED for [" + jobConfiguration.getJobName() + "].",
+                "Execution of job [" + jobConfiguration.getJobName() + "] on [" + hostname + "] failed.\n\n"
+                        + "Exception message: " + e.getMessage() + "\n\n"
+                        + stacktrace + "\n\n"
+                        + "This is a automatically generated notification. Please do not reply.",
+                callback
+        );
     }
 
 }
