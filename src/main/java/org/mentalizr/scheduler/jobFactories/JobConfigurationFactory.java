@@ -12,6 +12,8 @@ import org.mentalizr.scheduler.jobs.activityStatWeekly.ActivityStatWeeklyConfigu
 import org.mentalizr.scheduler.jobs.activityStatWeekly.ActivityStatWeeklyConfigurationParser;
 import org.mentalizr.scheduler.jobs.heartbeat.HeartbeatConfiguration;
 import org.mentalizr.scheduler.jobs.heartbeat.HeartbeatConfigurationParser;
+import org.mentalizr.scheduler.jobs.watchdog.WatchdogConfiguration;
+import org.mentalizr.scheduler.jobs.watchdog.WatchdogConfigurationParser;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -40,6 +42,13 @@ public class JobConfigurationFactory {
             HeartbeatConfigurationParser heartbeatConfigurationParser
                     = new HeartbeatConfigurationParser(baseConfiguration, heartbeatSection, configurationFile);
             return heartbeatConfigurationParser.parse();
+
+        } else if (configurationFactory.hasSection(WatchdogConfiguration.SECTION_NAME)) {
+
+            Configuration watchdogSection = configurationFactory.getConfiguration(WatchdogConfiguration.SECTION_NAME);
+            WatchdogConfigurationParser watchdogConfigurationParser
+                    = new WatchdogConfigurationParser(baseConfiguration, watchdogSection, configurationFile);
+            return watchdogConfigurationParser.parse();
 
         } else {
             throw new M7rSchedulerConfigurationException("No valid scheduler configuration: " +
